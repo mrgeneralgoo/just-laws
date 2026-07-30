@@ -26,9 +26,10 @@ test("当前仓库的版本配置有效", () => {
     asOf: "2026-07-17",
   });
   const lawIds = records.map((record) => record.manifest.lawId);
-  assert.equal(records.length, 12);
+  assert.equal(records.length, 13);
   assert.ok(lawIds.includes("civil-and-commercial/trademark-law"));
   assert.ok(lawIds.includes("ecological-environment/ecological-environment-code"));
+  assert.ok(lawIds.includes("administrative/prisons-law"));
 });
 
 test("页面数据只注入商标法的两个已登记版本", () => {
