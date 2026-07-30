@@ -111,8 +111,8 @@ function validateManifest(record, docsDir, asOf, { enforceRootCurrent = true } =
   if (typeof manifest.title !== "string" || !manifest.title.trim()) {
     throw new Error(`${prefix}: title 不能为空`);
   }
-  if (!Array.isArray(manifest.versions) || manifest.versions.length < 2) {
-    throw new Error(`${prefix}: versions 至少需要两个版本`);
+  if (!Array.isArray(manifest.versions) || manifest.versions.length < 1) {
+    throw new Error(`${prefix}: versions 至少需要一个版本`);
   }
 
   const ids = new Set();
@@ -201,6 +201,8 @@ function decorateManifest(record, asOf) {
     schemaVersion: record.manifest.schemaVersion,
     lawId: record.manifest.lawId,
     title: record.manifest.title,
+    repealedBy: record.manifest.repealedBy || null,
+    repeals: record.manifest.repeals || [],
     asOf,
     versions,
   };

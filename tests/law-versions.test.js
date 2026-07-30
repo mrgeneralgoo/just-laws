@@ -21,12 +21,16 @@ test("商标法版本状态按有效期派生", () => {
   assert.equal(statusForDate(pending, "2027-01-01"), "current");
 });
 
-test("当前仓库的商标法版本配置有效", () => {
+test("当前仓库的版本配置有效", () => {
   const records = loadLawManifests(path.resolve(__dirname, "..", "docs"), {
     asOf: "2026-07-17",
   });
-  assert.equal(records.length, 1);
-  assert.equal(records[0].manifest.lawId, "civil-and-commercial/trademark-law");
+  const lawIds = records.map((record) => record.manifest.lawId);
+  assert.equal(records.length, 14);
+  assert.ok(lawIds.includes("civil-and-commercial/trademark-law"));
+  assert.ok(lawIds.includes("ecological-environment/ecological-environment-code"));
+  assert.ok(lawIds.includes("administrative/prisons-law"));
+  assert.ok(lawIds.includes("economic/certified-public-accountants-law"));
 });
 
 test("页面数据只注入商标法的两个已登记版本", () => {
@@ -50,10 +54,16 @@ test("页面数据只注入商标法的两个已登记版本", () => {
     data: {},
     routeMeta: {},
   };
+  const codeChildPage = {
+    filePathRelative: "ecological-environment/ecological-environment-code/01-general-principles.md",
+    data: {},
+    routeMeta: {},
+  };
 
   plugin.extendsPage(currentPage);
   plugin.extendsPage(futurePage);
   plugin.extendsPage(unrelatedPage);
+  plugin.extendsPage(codeChildPage);
 
   assert.equal(currentPage.data.lawVersions.selectedVersionId, "2019-amendment");
   assert.deepEqual(
@@ -78,6 +88,9 @@ test("页面数据只注入商标法的两个已登记版本", () => {
   assert.equal(futurePage.data.lawVersions.selectedVersionId, "2026-revision");
   assert.equal(futurePage.routeMeta.title, "中华人民共和国商标法（2026年修订版）");
   assert.equal(unrelatedPage.data.lawVersions, undefined);
+  assert.equal(codeChildPage.data.lawVersions.selectedVersionId, "2026-code");
+  assert.equal(codeChildPage.data.lawVersions.versions[0].status, "pending");
+  assert.equal(codeChildPage.routeMeta.title, undefined);
 });
 
 test("重叠区间、缺失入口和多个现行版本都会阻止校验", () => {
