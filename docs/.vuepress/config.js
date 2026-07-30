@@ -7,7 +7,7 @@ const { justLawsTheme } = require("./theme");
 module.exports = {
   lang: "zh-CN",
   title: "Just Laws",
-  description: "法律和法律都是相互依存的",
+  description: "清晰、可检索、适合长期阅读的中华人民共和国法律文库",
   head: [
     ["link", { rel: "icon", href: "/images/logo.png" }],
     [

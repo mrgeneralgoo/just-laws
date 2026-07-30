@@ -32,7 +32,7 @@ features: []
           <span>个法律部门</span>
         </div>
         <div class="jl-stat">
-          <strong>2026.04</strong>
+          <strong>2026.06</strong>
           <span>数据更新时间</span>
         </div>
       </div>
