@@ -41,7 +41,9 @@ const showBanner = computed(() => {
           ? "尚未生效"
           : selected.status === "expired"
             ? "历史版本"
-            : "即将废止"
+            : data.repealedBy
+              ? "即将废止"
+              : "即将失效"
       }}
     </strong>
     <span v-if="selected.status === 'pending'">
