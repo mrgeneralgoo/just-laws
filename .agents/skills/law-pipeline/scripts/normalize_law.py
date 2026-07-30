@@ -962,7 +962,7 @@ def update_progress_file(progress_path: Path, titles: set[str]) -> None:
                 cells[-1] = status
                 line = "| " + " | ".join(cells) + " |"
             category_totals[current_category] = category_totals.get(current_category, 0) + 1
-            if status == COLLECTED_STATUS:
+            if status.startswith(COLLECTED_STATUS):
                 category_done[current_category] = category_done.get(current_category, 0) + 1
             updated_lines.append(line)
             continue
@@ -1098,7 +1098,7 @@ def main() -> None:
                     file=sys.stderr,
                 )
                 continue
-            if status == COLLECTED_STATUS:
+            if status.startswith(COLLECTED_STATUS):
                 continue
         category = mapping_info.get("category", "uncategorized")
         slug = mapping_info.get("slug")

@@ -22,7 +22,10 @@ function lawVersionsPlugin({ docsDir, asOf = chinaDate() }) {
         const lawId = record.manifest.lawId;
         if (!relative.startsWith(`${lawId}/`)) continue;
         const entry = relative.slice(lawId.length + 1);
-        const selected = record.manifest.versions.find((version) => version.entry === entry);
+        let selected = record.manifest.versions.find((version) => version.entry === entry);
+        if (!selected && !entry.startsWith("versions/")) {
+          selected = record.manifest.versions.find((version) => version.entry === "README.md");
+        }
         if (!selected) return;
 
         const data = decorateManifest(record, asOf);
@@ -31,7 +34,7 @@ function lawVersionsPlugin({ docsDir, asOf = chinaDate() }) {
           selectedVersionId: selected.id,
         };
 
-        if (entry !== "README.md") {
+        if (selected.entry === entry && entry !== "README.md") {
           page.routeMeta.title = `${record.manifest.title}（${selected.label}）`;
         }
         return;

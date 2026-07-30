@@ -204,6 +204,11 @@ html.dark {
   background: color-mix(in srgb, #f59e0b 9%, var(--c-bg));
 }
 
+.law-version-banner.is-ending {
+  border-left-color: #d97706;
+  background: color-mix(in srgb, #f59e0b 9%, var(--c-bg));
+}
+
 .law-version-banner.is-expired {
   border-left-color: var(--c-text-light);
 }
