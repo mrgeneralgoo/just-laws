@@ -1,0 +1,124 @@
+name: Release laws effective 2026-08-15
+
+on:
+  schedule:
+    # 2026-08-15 00:05 in Asia/Shanghai (GitHub cron uses UTC).
+    - cron: "5 16 14 8 *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  promote-build-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - name: Check release date
+        id: release_date
+        shell: bash
+        run: |
+          release_date="2026-08-15"
+          today="$(TZ=Asia/Shanghai date +%F)"
+
+          if [[ "${{ github.event_name }}" == "schedule" && "$today" != "$release_date" ]]; then
+            echo "The one-time release date has passed; skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "$today" < "$release_date" ]]; then
+            echo "Refusing to promote versions before $release_date (Asia/Shanghai)."
+            exit 1
+          fi
+
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout master
+        if: steps.release_date.outputs.should_run == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        if: steps.release_date.outputs.should_run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.release_date.outputs.should_run == 'true'
+        run: npm install
+
+      - name: Promote versions effective on 2026-08-15
+        if: steps.release_date.outputs.should_run == 'true'
+        shell: bash
+        run: |
+          laws=(
+            "administrative/air-pollution-prevention-and-control-law"
+            "administrative/environment-protection"
+            "administrative/environmental-impact-assessment-law"
+            "administrative/marine-environment-protection-law"
+            "administrative/noise-pollution-prevention-and-control-law"
+            "administrative/radioactive-pollution-prevention-and-control-law"
+            "administrative/soil-pollution-prevention-and-control-law"
+            "administrative/solid-waste-pollution-prevention-and-control-law"
+            "administrative/water-pollution-prevention-and-control-law"
+            "economic/cleaner-production-promotion-law"
+          )
+
+          for law in "${laws[@]}"; do
+            npm run laws:versions:promote -- "$law" --as-of 2026-08-15 --apply
+          done
+
+      - name: Validate and build documentation site
+        if: steps.release_date.outputs.should_run == 'true'
+        run: |
+          npm run test:law-versions
+          npm run docs:build
+
+      - name: Commit promoted versions
+        if: steps.release_date.outputs.should_run == 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            docs/administrative/air-pollution-prevention-and-control-law \
+            docs/administrative/environment-protection \
+            docs/administrative/environmental-impact-assessment-law \
+            docs/administrative/marine-environment-protection-law \
+            docs/administrative/noise-pollution-prevention-and-control-law \
+            docs/administrative/radioactive-pollution-prevention-and-control-law \
+            docs/administrative/soil-pollution-prevention-and-control-law \
+            docs/administrative/solid-waste-pollution-prevention-and-control-law \
+            docs/administrative/water-pollution-prevention-and-control-law \
+            docs/economic/cleaner-production-promotion-law
+
+          if git diff --cached --quiet; then
+            echo "All versions are already promoted."
+            exit 0
+          fi
+
+          git commit \
+            -m "🔄️ 切换2026年8月15日生效的法律版本" \
+            -m "Signed-off-by: ImCaO <imcao@imcao.com>"
+          git push origin HEAD:master
+
+      - name: Deploy
+        if: steps.release_date.outputs.should_run == 'true'
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.ACCESS_TOKEN }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "/docs/.vuepress/dist/"
+          REMOTE_HOST: "${{ secrets.SERVER_HOST }}"
+          REMOTE_USER: "${{ secrets.USER_NAME }}"
+          TARGET: "/usr/share/nginx/html/justlaws"

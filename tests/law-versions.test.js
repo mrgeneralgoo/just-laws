@@ -5,6 +5,7 @@ const path = require("node:path");
 const test = require("node:test");
 
 const {
+  chinaDate,
   loadLawManifests,
   promoteVersion,
   statusForDate,
@@ -23,7 +24,7 @@ test("商标法版本状态按有效期派生", () => {
 
 test("当前仓库的版本配置有效", () => {
   const records = loadLawManifests(path.resolve(__dirname, "..", "docs"), {
-    asOf: "2026-07-17",
+    asOf: chinaDate(),
   });
   const lawIds = records.map((record) => record.manifest.lawId);
   assert.equal(records.length, 14);
@@ -34,9 +35,10 @@ test("当前仓库的版本配置有效", () => {
 });
 
 test("页面数据只注入商标法的两个已登记版本", () => {
+  const asOf = chinaDate();
   const plugin = lawVersionsPlugin({
     docsDir: path.resolve(__dirname, "..", "docs"),
-    asOf: "2026-07-17",
+    asOf,
   });
   const currentPage = {
     filePathRelative: "civil-and-commercial/trademark-law/README.md",
@@ -89,7 +91,10 @@ test("页面数据只注入商标法的两个已登记版本", () => {
   assert.equal(futurePage.routeMeta.title, "中华人民共和国商标法（2026年修订版）");
   assert.equal(unrelatedPage.data.lawVersions, undefined);
   assert.equal(codeChildPage.data.lawVersions.selectedVersionId, "2026-code");
-  assert.equal(codeChildPage.data.lawVersions.versions[0].status, "pending");
+  assert.equal(
+    codeChildPage.data.lawVersions.versions[0].status,
+    asOf < "2026-08-15" ? "pending" : "current"
+  );
   assert.equal(codeChildPage.routeMeta.title, undefined);
 });
 
