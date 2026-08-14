@@ -13,7 +13,7 @@
       "promulgatedOn": "2014-04-24",
       "effectiveFrom": "2015-01-01",
       "effectiveTo": "2026-08-15",
-      "entry": "README.md"
+      "entry": "versions/2015-01-01/README.md"
     },
     {
       "id": "2026-repeal",
@@ -21,7 +21,7 @@
       "promulgatedOn": "2026-03-12",
       "effectiveFrom": "2026-08-15",
       "effectiveTo": null,
-      "entry": "versions/2026-08-15/README.md"
+      "entry": "README.md"
     }
   ]
 }
