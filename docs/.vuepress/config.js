@@ -97,10 +97,10 @@ module.exports = {
         slug: "ecological-environment",
         featured: [
           "生态环境法典",
-          "环境保护法",
-          "水污染防治法",
-          "大气污染防治法",
-          "土壤污染防治法",
+          "长江保护法",
+          "黄河保护法",
+          "森林法",
+          "野生动物保护法",
         ],
       }),
       categoryNavbarItem({

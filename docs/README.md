@@ -93,7 +93,7 @@ features: []
       </a>
       <a class="jl-category" href="/category/ecological-environment.html">
         <strong>生态环境法</strong>
-        <span>36 部</span>
+        <span>26 部</span>
       </a>
       <a class="jl-category" href="/category/criminal-law.html">
         <strong>刑法</strong>

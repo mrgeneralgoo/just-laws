@@ -33,7 +33,7 @@ const versionData = computed(() => page.value.lawVersions || null);
           <slot name="bottom" />
         </div>
 
-        <aside class="law-version-aside" aria-label="法律版本">
+        <aside class="law-version-aside" aria-label="法律版本与立法沿革">
           <LawVersionTimeline :data="versionData" />
         </aside>
       </div>
